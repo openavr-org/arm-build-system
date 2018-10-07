@@ -80,54 +80,74 @@ ifeq ($(SHOW_TOOLCHAIN),y)
   $(info "SIZE:      $(SIZE)")
 endif
 
+## Warnings for C, C++ and ASM
 WARNINGS  = -Wall
 WARNINGS += -Werror
+WARNINGS += -Wextra
+#WARNINGS += -Wredundant-decls
+WARNINGS += -Wundef
+WARNINGS += -Wshadow
+WARNINGS += -Wfloat-conversion
 WARNINGS += $(ARCH_WARNINGS)
 
-DEFS  = $(ARCH_DEFS) $(TGT_DEFS)
+## Warnings for C
+C_WARNINGS  = $(WARNINGS)
+C_WARNINGS += -Wimplicit-function-declaration
+C_WARNINGS += -Wmissing-prototypes
+C_WARNINGS += -Wstrict-prototypes
 
+## Warnings for C
+CXX_WARNINGS  = $(WARNINGS)
+
+## Warnings for C
+AS_WARNINGS  = $(WARNINGS)
+
+## Defines for C, C++ and ASM
+DEFS  = $(ARCH_DEFS)
+DEFS += $(TGT_DEFS)
+
+## Defines for ASM
 AS_DEFS  = $(DEFS)
 AS_DEFS += $(ARCH_AS_DEFS)
 
-LIB_DIRS  = -L./obj
+## Flags for C, C++ and ASM
+C_CXX_AS_FLAGS  = -Os  # Optimize for size.
+C_CXX_AS_FLAGS += -Og  # Optimize for debugging experience (ok to combine with -Os).
+C_CXX_AS_FLAGS += -g3
+C_CXX_AS_FLAGS += -ggdb
+C_CXX_AS_FLAGS += -ffast-math
+C_CXX_AS_FLAGS += -fno-finite-math-only
+C_CXX_AS_FLAGS += -fmessage-length=100
+C_CXX_AS_FLAGS += -flto
+C_CXX_AS_FLAGS += -ffunction-sections
+C_CXX_AS_FLAGS += -fdata-sections
+C_CXX_AS_FLAGS += $(INC_DIRS)
+C_CXX_AS_FLAGS += $(MCPU)
+C_CXX_AS_FLAGS += $(MARCH)
 
-CFLAGS  = -gdwarf-2
-CFLAGS += $(WARNINGS)
-CFLAGS += $(DEFS)
-CFLAGS += $(INC_DIRS)
-CFLAGS += $(MCPU)
-CFLAGS += $(MARCH)
-CFLAGS += -O2
+## Flags for C and C++
+C_CXX_FLAGS  = $(C_CXX_AS_FLAGS)
+C_CXX_FLAGS += $(DEFS)
+
+## Flags for C
+CFLAGS = $(C_CXX_FLAGS)
+CFLAGS += $(C_WARNINGS)
 CFLAGS += -fno-strict-aliasing
-CFLAGS += -fdata-sections
-CFLAGS += -ffunction-sections
-CFLAGS += --specs=nano.specs
-CFLAGS += --specs=nosys.specs
 
-CXXFLAGS  = -gdwarf-2
-CXXFLAGS += $(WARNINGS)
-CXXFLAGS += $(DEFS)
-CXXFLAGS += $(INC_DIRS)
-CXXFLAGS += $(MCPU)
-CXXFLAGS += $(MARCH)
-CXXFLAGS += -O2
-CXXFLAGS += -fdata-sections
-CXXFLAGS += -ffunction-sections
-CXXFLAGS += --specs=nano.specs
-CXXFLAGS += --specs=nosys.specs
+## Flags for C++
+CXXFLAGS  = $(C_CXX_FLAGS)
+CXXFLAGS += $(CXX_WARNINGS)
 
-ASFLAGS  = $(WARNINGS)
+## Flags for ASM
+ASFLAGS  = $(C_CXX_AS_FLAGS)
+ASFLAGS += $(AS_WARNINGS)
 ASFLAGS += $(AS_DEFS)
 ASFLAGS += -x assembler-with-cpp
-ASFLAGS += -Wa,-gdwarf-2
-ASFLAGS += $(INC_DIRS)
-ASFLAGS += $(MCPU)
-ASFLAGS += $(MARCH)
-ASFLAGS += -fdata-sections
-ASFLAGS += -ffunction-sections
-ASFLAGS += --specs=nano.specs
-ASFLAGS += --specs=nosys.specs
+ASFLAGS += -Wa,-ggdb
 
+LIB_DIRS  = -L./obj
+
+## Flags for linking
 LDFLAGS  = -Wl,-Map,$@.map
 LDFLAGS += -Wl,-T$(LD_SCRIPT)
 LDFLAGS += -Wl,--gc-sections
@@ -135,6 +155,9 @@ LDFLAGS += -nostartfiles
 LDFLLGS += -nodefaultlibs
 #LDFLAGS += -nostdlib
 LDFLAGS += $(LIB_DIRS)
+LDFLAGS += --specs=nano.specs
+LDFLAGS += --specs=nosys.specs
+LDFLAGS += -flto
 
 ARCHIVES ?=
 INC_DIRS ?=
