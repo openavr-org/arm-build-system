@@ -41,5 +41,5 @@ ARCH_SRC_DIRS   +=
 
 MCPU            += -mthumb
 MCPU            += -mcpu=cortex-m4
-MCPU            += -mfloat-abi=softfp
-#MCPU            += -mfpu=vfpv4-sp-d16    # ???
+MCPU            += -mfloat-abi=hard
+MCPU            += -mfpu=fpv4-sp-d16
