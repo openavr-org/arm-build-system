@@ -49,16 +49,16 @@ include $(MAKE_TOOLS_DIR)/arches/$(TGT_ARCH).mk
 TOOLCHAIN   ?= arm-none-eabi-
 
 ADDR2LINE   := $(TOOLCHAIN)addr2line
-AR          := $(TOOLCHAIN)ar
+AR          := $(TOOLCHAIN)gcc-ar
 AS          := $(TOOLCHAIN)as
 CPP         := $(TOOLCHAIN)cpp
 CXX         := $(TOOLCHAIN)g++
 CC          := $(TOOLCHAIN)gcc
 LD          := $(TOOLCHAIN)ld
-NM          := $(TOOLCHAIN)nm
+NM          := $(TOOLCHAIN)gcc-nm
 OBJCOPY     := $(TOOLCHAIN)objcopy
 OBJDUMP     := $(TOOLCHAIN)objdump
-RANLIB      := $(TOOLCHAIN)ranlib
+RANLIB      := $(TOOLCHAIN)gcc-ranlib
 READELF     := $(TOOLCHAIN)readelf
 STRIP       := $(TOOLCHAIN)strip
 SIZE        := $(TOOLCHAIN)size
